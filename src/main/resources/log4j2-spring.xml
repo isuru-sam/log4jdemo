@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="60">
+	<Properties>
+		<Property name="log-path">applogs</Property>
+	</Properties>
+	<Appenders>
+		<Console name="Console-Appender" target="SYSTEM_OUT">
+
+			<PatternLayout>
+				<pattern>
+					[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
+				</pattern>
+				>
+			</PatternLayout>
+		</Console>
+
+		<RollingRandomAccessFile fileName="${log-path}/passengerrolling.log"
+			filePattern="${log-path}/passenger-%d{yyyy-MM-dd}-%i.log.zip" name="RolingRAFileAppender">
+
+			<PatternLayout>
+				<Pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
+				</Pattern>
+			</PatternLayout>
+
+
+			<Filters>
+				<ThresholdFilter level="trace" />
+				<ThresholdFilter level="error" onMatch="DENY"
+					onMismatch="NEUTRAL" />
+			</Filters>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingRandomAccessFile>
+
+
+
+		<RollingRandomAccessFile fileName="${log-path}/errors.log"
+			filePattern="${log-path}/passenger-%d{yyyy-MM-dd}-%i.log.zip" name="ERRORLOG">
+			<ThresholdFilter level="ERROR" onMatch="ACCEPT"
+				onMismatch="DENY" />
+			<PatternLayout>
+				<Pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
+				</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />
+				<SizeBasedTriggeringPolicy size="5 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingRandomAccessFile>
+
+
+	</Appenders>
+
+
+	<Loggers>
+		<Logger name="com.general.generalapp.service" level="debug"
+			additivity="false">
+			<AppenderRef ref="ERRORLOG" level="error" />
+			<AppenderRef ref="Console-Appender" />
+			<AppenderRef ref="RolingRAFileAppender" />
+		</Logger>
+
+		<Root level="debug">
+			<AppenderRef ref="Console-Appender" />
+			<AppenderRef ref="RolingRAFileAppender" />
+		</Root>
+		<!-- <Root level="debug"> <AppenderRef ref="Console-Appender"/> <AppenderRef 
+			ref="RolingRAFileAppender"/> </Root> <Root level="error" > <AppenderRef ref="Console-Appender" 
+			/> <AppenderRef ref="ERRORLOG" /> </Root> -->
+	</Loggers>
+</Configuration>
